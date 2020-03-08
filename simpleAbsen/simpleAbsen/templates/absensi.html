@@ -1,0 +1,112 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+    <div class="toast" id="eltoast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img src="..." class="rounded mr-2" alt="...">
+            <strong class="mr-auto">Absensi MKDU</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body" id="pesanToast">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+pertemuan {{ pertemuan }}
+kelas {{kelas}}
+Jumlah Mahasiswa Absen <div id="progress">
+                           <label id="progresslbl"></label>
+                           <div class="progress" id="pgbar">
+                               <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                           </div>
+                        </div>
+<input type="hidden" id="pertemuan" value="{{pertemuan}}" />
+<input type="hidden" id="kelas" value="{{kelas}}" />
+<input type="hidden" id="kd_mk" value="{{kd_mk}}" />
+<input id="scan" type="text" class="form-control" placeholder="Scan">
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">NIM</th>
+            <th scope="col">Nama</th>
+            <th scope="col">Kehadiran</th>
+        </tr>
+    </thead>
+    <tbody id="absentable">
+       
+    </tbody>
+
+</table>
+<script>
+    let totalAbsen = 0;
+    let totalMhs = 0;
+    $("#scan").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#cekabsen" + $("#scan").val()).empty();
+            $("#cekabsen" + $("#scan").val()).append("<span class=\"badge badge-pill badge-primary\">✔</span>");
+            $("#cekabsen" + $("#scan").val()).parent().prependTo("#absentable");
+            $.get("/doAbsen?NIM="+$("#scan").val()+"&kd_mk="+$("#kd_mk").val()+"&kd_kls="+$("#kelas").val()+"&pertemuan=" + $("#pertemuan").val(),
+                function (data, status) {
+                    console.log(status)
+                    if (data == "mahasiswa sudah absen") {
+                        showMessage("Mahasiswa sudah absen")
+                    } else {
+                        totalAbsen++;
+                        $("#pgbar").attr("style", "width: " + (totalAbsen / totalMhs) * 100 + "%");
+                        $("#progresslbl").val(totalMhs + " dari " + totalMhs);
+                        showMessage("absen sukses")
+                    }
+            });
+            
+            $("#scan").focus();
+            $("#scan").val('');
+        }
+    });
+    $(document).on("keydown",function () {
+         $("#scan").focus();
+    });
+    $(function () {
+        console.log("pertemuan=" + $("#pertemuan").val() + "&kelas=" + $("#kelas").val() + "&kd_mk=" + $("#kd_mk").val())
+        $("#absentable").empty();
+        $.get("/getabsen?pertemuan=" + $("#pertemuan").val() + "&kelas=" + $("#kelas").val() + "&kd_mk=" + $("#kd_mk").val()+"&pertemuan="+ $("#pertemuan").val(),   
+            function (data, status) {
+                console.log(data)
+                $.each(data, function (index, value) {
+                    let ln1 = "<tr>";
+                    let ln2 = "<th scope=\"row\"><img  src=\"https://sikad.umkt.ac.id/sikad4umkt/mahasiswa/foto/"+value[0]+"\"  width=\"90\" height=\"120\" /></th>";
+                    let ln3 = "<td>" + value[0] + "</td>";
+                    let ln4 = "<td>" + value[1] + "</td>";
+                    let ln5 = "<td id=\"cekabsen" + value[0] + "\"> <span class="+ (value[2] > 0 ? ("\"badge badge-pill badge-primary\">✔"):("\"badge badge-pill badge-danger\">✘"))+"</span> </td>";
+                    let ln6 = "</tr>"
+                    let view = ln1 + ln2 + ln3 + ln4 + ln5 + ln6
+                    $("#absentable").append(view);
+                    if (value[2] > 0)
+                        totalAbsen++;
+                });
+                totalMhs = data.length;
+                $("#pgbar").attr("style", "width: " + (totalAbsen / totalMhs) * 100 + "%");
+                $("#progresslbl").val(totalMhs + " dari " + totalMhs);
+            });
+        
+    });
+    function loadProgressBar() {
+         let progress= "<span></span> \
+                           <div class=\"progress\">\
+                               <div class=\"progress-bar progress-bar-striped\" role=\"progressbar\" style=\"width: "+(totalAbsen/totalMhs)*100+"%\" aria-valuenow=\"10\" aria-valuemin=\"0\" aria-valuemax="+data.length+"></div>\
+                           </div>"
+                $("#progress").empty();
+        $("#progress").append(progress);
+    }
+
+    function showMessage(msg) {
+        $("#pesanToast").empty();
+        $("#pesanToast").append(msg)
+        $('#eltoast').toast('show');
+    }
+</script>
+
+
+{% endblock %}

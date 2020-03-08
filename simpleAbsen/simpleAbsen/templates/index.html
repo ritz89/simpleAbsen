@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="jumbotron">
+    <h1>Flask</h1>
+    <p class="lead">Flask is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="http://flask.pocoo.org/" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-lg">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Kelas</th>
+                    <th scope="col">Nama MK</th>
+                    <th scope="col">Pengampu</th>
+                    <th scope="col">Hari</th>
+                    <th scope="col">Jam</th>
+                    <th scope="col">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for matkul in mk %}
+                <tr>
+                    <th scope="row">{{loop.index}} </th>
+                    <td>{{matkul[1]}}/{{matkul[7]}}</td>
+                    <td>{{matkul[2]}}</td>
+                    <td>{{matkul[3]}}</td>
+                    <td>{{matkul[4]}}</td>
+                    <td>{{matkul[5]}}-{{matkul[6]}}</td>
+                    <td>
+                        <form action="/absensi" method="post">
+                            <span>pertemuan: </span>
+                            <select name="pert">
+                                {% for i in range(14) %}
+                                <option>{{i+1}}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="hidden" value="{{matkul[7]}}" name="kelas" />
+                            <input type="hidden" value="{{matkul[1]}}" name="kd_mk" />
+                            <input type="submit" class="btn btn-primary" value="masuk" />
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
