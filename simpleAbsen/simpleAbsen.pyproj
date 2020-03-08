@@ -43,6 +43,7 @@
   <ItemGroup>
     <None Include="FolderProfile.pubxml" />
     <Content Include="requirements.txt" />
+    <Content Include="simpleAbsen\absen.sql" />
     <Content Include="simpleAbsen\static\content\bootstrap.css" />
     <Content Include="simpleAbsen\static\content\bootstrap.min.css" />
     <Content Include="simpleAbsen\static\content\site.css" />
