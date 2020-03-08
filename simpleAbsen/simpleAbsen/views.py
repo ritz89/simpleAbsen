@@ -6,6 +6,7 @@ from datetime import datetime
 from flask import render_template, request, jsonify
 from simpleAbsen import app
 import mysql.connector
+from simpleAbsen.model.module1 import *
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -17,6 +18,9 @@ mydb = mysql.connector.connect(
 cursor = mydb.cursor()
 
 @app.route('/')
+def panggil():
+    return helloW()
+
 @app.route('/home')
 def home():
     """Renders the home page."""

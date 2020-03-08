@@ -29,11 +29,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="runserver.py" />
+    <Compile Include="simpleAbsen\model\module1.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="simpleAbsen\model\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="simpleAbsen\__init__.py" />
     <Compile Include="simpleAbsen\views.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="simpleAbsen\" />
+    <Folder Include="simpleAbsen\model\" />
     <Folder Include="simpleAbsen\static\" />
     <Folder Include="simpleAbsen\static\content\" />
     <Folder Include="simpleAbsen\static\fonts\" />
